@@ -7,16 +7,17 @@ import {
   Text,
 } from 'react-native';
 import {format} from 'date-fns';
-import React, {useState} from 'react';
-import {
-  StyleSheet,
-  View,
-  TextInput,
-  TouchableOpacity,
-  Text,
-} from 'react-native';
-import {format} from 'date-fns';
 export default function Submit() {
+  const [name, setName] = useState('');
+  const [comment, setComment] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
+  const currentTimestamp = new Date().getTime();
+  const formattedTimestamp = format(new Date(), 'yyyy-MM-dd HH:mm:ss');
+  const handleButtonPress = () => {
+    console.log(currentTimestamp);
+    console.log('formattedTimestamp', formattedTimestamp);
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.background}>
