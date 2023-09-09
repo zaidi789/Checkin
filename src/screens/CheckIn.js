@@ -25,7 +25,7 @@ export default function CheckIn() {
   const [fetchedData, setFetchedData] = useState([]);
   const [sortedData, setSortedData] = useState([]);
 
-  // console.log(fetchedData);
+  console.log(fetchedData);
 
   useEffect(() => {
     setCurrentDate(new Date());
@@ -113,7 +113,7 @@ export default function CheckIn() {
                 {item.comment === null ? (
                   <Text style={styles.comment}>No Comment</Text>
                 ) : (
-                  <Text style={styles.comment}>{item.name}</Text>
+                  <Text style={styles.comment}>{item.comment}</Text>
                 )}
               </View>
             </View>
