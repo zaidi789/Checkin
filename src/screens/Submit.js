@@ -6,16 +6,67 @@ import {
   TouchableOpacity,
   Text,
 } from 'react-native';
-import {format} from 'date-fns';
+import {useMutation} from '@apollo/client';
+import {gql} from '@apollo/client';
+
+const INSERT_CHECK_IN_MUTATION = gql`
+  mutation InsertCheckIn(
+    $name: String!
+    $comment: String!
+    $imageUrl: String!
+    $created_at: timestamptz!
+  ) {
+    insert_check_in_one(
+      object: {
+        name: $name
+        comment: $comment
+        image_url: $imageUrl
+        created_at: $created_at
+      }
+    ) {
+      id
+      name
+      comment
+      created_at
+      image_url
+    }
+  }
+`;
+
 export default function Submit() {
   const [name, setName] = useState('');
   const [comment, setComment] = useState('');
   const [imageUrl, setImageUrl] = useState('');
-  const currentTimestamp = new Date().getTime();
-  const formattedTimestamp = format(new Date(), 'yyyy-MM-dd HH:mm:ss');
-  const handleButtonPress = () => {
-    console.log(currentTimestamp);
-    console.log('formattedTimestamp', formattedTimestamp);
+  const [mutationResult, setMutationResult] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [insertCheckIn] = useMutation(INSERT_CHECK_IN_MUTATION);
+
+  const handleButtonPress = async () => {
+    try {
+      setIsLoading(true);
+
+      const currentTimestamp = new Date().toISOString();
+
+      const {data} = await insertCheckIn({
+        variables: {
+          name,
+          comment,
+          imageUrl,
+          created_at: currentTimestamp,
+        },
+      });
+
+      setMutationResult(data.insert_check_in_one);
+
+      setName('');
+      setComment('');
+      setImageUrl('');
+    } catch (error) {
+      console.error('Error inserting check-in:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -46,6 +97,10 @@ export default function Submit() {
           }}>
           <Text style={styles.buttonText}>ADD</Text>
         </TouchableOpacity>
+        {isLoading && <Text>Loading...</Text>}
+        {mutationResult && (
+          <Text>Mutation Result: {JSON.stringify(mutationResult)}</Text>
+        )}
       </View>
     </View>
   );
